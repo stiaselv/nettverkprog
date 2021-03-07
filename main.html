@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Oving 5</title>
+        <link rel="stylesheet" href="/path/to/styles/default.css">
+        <script src="/path/to/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    
+        <style>
+            * {
+                padding: 0.1 rem;
+                margin: 0;
+                box-sizing: border-box;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <h1 type="head">TextConverter</h1>
+        <form oninput="(resultBoop.value = boop.value) && hljs.highlightAll();" action="/" method="post">        
+            <textarea id="boop" name="boop" autocomplete="off" required autofocus rows="20" cols="40" placeholder="input code here..."></textarea>
+        </form>
+
+        <script>
+            function boop(){
+                document.getElementById(boop).submit();
+            }
+        </script>
+
+        <fieldset><legend>Review</legend>
+            <pre><code class="html"><output id="resultBoop">{{ .resultBoop() }}</output></code></pre>
+        </fieldset> 
+
+        <script>
+            function resultBoop(){
+                document.getElementById(resultBoop).get();
+            }
+        </script>
+        
+        <button id="btnSend">SEND IT!</button> <br>
+
+        <fieldset id="outputBoop"><legend>Output</legend>
+            <pre><code></code></pre>
+        </fieldset>
+    </body>
+</html>
