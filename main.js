@@ -13,11 +13,7 @@ const httpServer = net.createServer((connection) => {
     <script>
       let ws = new WebSocket('ws://localhost:3001');
       ws.onmessage = event => alert('Message from server: ' + event.data);
-      ws.onopen = () => {
-        console.log('Connection established!');
-        ws.send('hello');
-
-        ws.onclose = () => console.log('Closing');
+      ws.onopen = () => ws.send('hello');
     </script>
   </body>
 </html>
@@ -36,10 +32,6 @@ const wsServer = net.createServer((connection) => {
   connection.on('data', (data) => {
     console.log('Data received from client: ', data.toString());
   });
-
-  connection.on('message',message => {
-    console.log(message.toString());
-  })
 
   connection.on('end', () => {
     console.log('Client disconnected');
