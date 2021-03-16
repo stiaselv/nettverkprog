@@ -1,55 +1,53 @@
-import * as http from 'http'
+const net = require('net');
 
-function boop() {
-    var x = form.getElementById("boop");    
-    return x;
-}
+// Simple HTTP server responds with a simple WebSocket client test
+const httpServer = net.createServer((connection) => {
+  connection.on('data', () => {
+    let content = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    WebSocket test page
+    <script>
+      let ws = new WebSocket('ws://localhost:3001');
+      ws.onmessage = event => alert('Message from server: ' + event.data);
+      ws.onopen = () => {
+        console.log('Connection established!');
+        ws.send('hello');
 
-function resultBoop(){
-    var x = boop();
-    x.write(x);
-}
+        ws.onclose = () => console.log('Closing');
+    </script>
+  </body>
+</html>
+`;
+    connection.write('HTTP/1.1 200 OK\r\nContent-Length: ' + content.length + '\r\n\r\n' + content);
+  });
+});
+httpServer.listen(3000, () => {
+  console.log('HTTP server listening on port 3000');
+});
 
-function outputBoop() {
-    var x = boop();
-    document.getElementById("btnSend").addEventListener("click", function(){
-        x.write(x);
-    })
-    
-}
+// Incomplete WebSocket server
+const wsServer = net.createServer((connection) => {
+  console.log('Client connected');
 
-function main() {
-    const host = "localhost";
-    const port = 8080;
-    const net = require("net");
+  connection.on('data', (data) => {
+    console.log('Data received from client: ', data.toString());
+  });
 
-    const server = net.createServer();
-    server.listen(port, host, () => {
-        console.log("TCP Server is running on port " + port + ".");
-    })
+  connection.on('message',message => {
+    console.log(message.toString());
+  })
 
-    let sockets = [];
-
-    server.on("connection", function(sock) {
-        console.log("CONNECTED: " + sock.remoteAddress + ":" + sock.remotePort);
-        sockets.push(sock);
-
-        sock.on("data", function(data) {
-            console.log("DATA " + sock.remoteAddress + ": " + data);
-            // Write the data back to all the connected, the client will recieve it as data from the server
-            sockets.forEach(function(sock, index, array) {
-                sock.write(sock.remoteAddress + ":" + sock.remotePort + " said " + data + "\n");
-            });
-        });
-
-        // Add a 'close' event handler to this instance of socket
-        sock.on("close", function(data) {
-            let index = sockets.findIndex(function(o) {
-                return o.remoteAddress === sock.removeAllListeners && o.remotePort === sock.remotePort;
-            })
-            if (index !== -1) sockets.splice(index, 1);
-            console.log("CLOSED: " + sock.remoteAddress + " " + sock.remotePort);
-        })
-    })
-
-}
+  connection.on('end', () => {
+    console.log('Client disconnected');
+  });
+});
+wsServer.on('error', (error) => {
+  console.error('Error: ', error);
+});
+wsServer.listen(3001, () => {
+  console.log('WebSocket server listening on port 3001');
+});
